@@ -7,5 +7,3 @@ scikit-learn
 accelerate
 janome
 pyngrok
-rouge-score
-bert-score
