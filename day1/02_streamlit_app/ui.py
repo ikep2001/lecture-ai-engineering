@@ -289,3 +289,21 @@ def display_data_page():
     for metric, description in metrics_info.items():
         with st.expander(f"{metric}"):
             st.write(description)
+
+
+import streamlit as st
+from metrics import evaluate_rouge_l, evaluate_bertscore
+
+def display_evaluation_page():
+    st.header("🧮 モデル応答評価")
+    reference  = st.text_area("Reference (正解例)",      height=120)
+    prediction = st.text_area("Prediction (モデル応答)", height=120)
+    if st.button("Evaluate"):
+        # ROUGE‑L
+        rl = evaluate_rouge_l(reference, prediction)
+        st.metric("ROUGE‑L (F1)", f"{rl:.3f}")
+        # BERTScore
+        bs = evaluate_bertscore([reference], [prediction], lang="ja")
+        st.metric("BERTScore Precision", f"{bs['precision']:.3f}")
+        st.metric("BERTScore Recall",    f"{bs['recall']:.3f}")
+        st.metric("BERTScore F1",        f"{bs['f1']:.3f}")
