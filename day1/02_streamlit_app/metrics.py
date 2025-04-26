@@ -106,3 +106,25 @@ def get_metrics_descriptions():
         "関連性スコア (relevance_score)": "正解と回答の共通単語の割合。トピックの関連性を表す (0〜1の値)",
         "効率性スコア (efficiency_score)": "正確性を応答時間で割った値。高速で正確な回答ほど高スコア"
     }
+
+
+# Reference: “The quick brown fox jumps over the lazy dog.”
+# Prediction: “A fast brown fox jumps over a lazy dog.”
+
+from rouge_score import rouge_scorer
+from bert_score import score as bert_score
+
+def evaluate_rouge_l(reference: str, prediction: str) -> float:
+    scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
+    scores = scorer.score(reference, prediction)
+    return scores["rougeL"].fmeasure
+
+def evaluate_bertscore(
+    references: list[str], candidates: list[str], lang: str = "ja"
+) -> dict[str, float]:
+    P, R, F1 = bert_score(candidates, references, lang=lang)
+    return {
+        "precision": float(P.mean()),
+        "recall":    float(R.mean()),
+        "f1":        float(F1.mean())
+    }
